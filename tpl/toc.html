@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="style.css" type="text/css"/>
     </head>
 <body>
-
-<h2>目录</h2>
-
+<h2 class="toc_title">目录</h2>
 <ul>
     {% for chapter in chapters %}
     <li><a href="chapters/{{ chapter['file'] }}">{{ chapter['title'] }}</li>

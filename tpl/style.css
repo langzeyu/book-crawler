@@ -53,6 +53,7 @@ letter-spacing:4px;
 
 .book_author{
 text-align:center;
+font-weight:normal;
 }
 
 .book_cover{
@@ -66,6 +67,10 @@ text-align:center;
 .p_copyright{
 font-size:0.9em;
 text-align:center;
+}
+.toc_title{
+margin-top:24px;
+margin-bottom:24px;
 }
 
 .title_body{
