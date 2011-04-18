@@ -100,7 +100,7 @@ class BookHandler(BaseHandler):
         """docstring for get"""
         
         book = Book(id=book_id)
-        self.render('down.html', is_ready=book.is_ready, book_id=book.id, book_name=book.name, epub=book.epub, mobi=book.mobi)
+        self.render('down.html', book=book)
     
 class DownHandler(BaseHandler):
     """docstring for DownHandler"""
@@ -125,7 +125,7 @@ class DownHandler(BaseHandler):
         
         self.set_header("Content-Type", mime_types[filetype])
         self.set_header("Content-Length", len(data))
-        self.set_header("Content-Disposition", 'attachment; filename="%s.%s"' % (book_id, filetype))
+        self.set_header("Content-Disposition", 'attachment; filename="%s.%s"' % (book.id, filetype))
         self.set_header("Cache-Control", "private, max-age=0, must-revalidate")
         self.set_header("Pragma", "public")
         self.write(data)

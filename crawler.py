@@ -22,7 +22,7 @@ import encodings
 encodings.aliases.aliases['gb2312'] = 'gb18030'
 encodings.aliases.aliases['gbk'] 	= 'gb18030'
 
-user_agent = "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/538.5+) Version/4.0 Kindle/3.0 (screen 600x800; rotate)"
+user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.44 Safari/534.24"
 
 tpl_dir  = os.path.join(os.path.dirname(__file__), 'tpl')
 data_dir = os.path.join(os.path.dirname(__file__), 'data')
@@ -276,7 +276,7 @@ class Crawler(object):
         book.unlock()
 
     def get_contents(self, url, referer=None):
-        """docstring for get_romte"""
+        """docstring for get_contents"""
 
         try:
             req = urllib2.Request(url)
