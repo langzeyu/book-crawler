@@ -15,8 +15,9 @@ from tornado import template
 from BeautifulSoup import BeautifulSoup
 from scrapy.selector import HtmlXPathSelector
 
-from rules import rules
+from rules import Rules
 
+import codecs
 import encodings
 encodings.aliases.aliases['gb2312'] = 'gb18030'
 encodings.aliases.aliases['gbk'] 	= 'gb18030'
@@ -73,14 +74,12 @@ class Book(object):
         fp.close()
         
     def unlock(self):
-        """docstring for unlick"""
+        """docstring for unlock"""
         os.unlink(os.path.join(self.book_dir, 'lock'))
     
     def set_name(self, name):
         self.name = name
-        fp = open(os.path.join(self.book_dir, 'bookname'), 'w')
-        fp.write(name)
-        fp.close()
+        self.render("bookname", os.path.join(self.book_dir, "bookname"), name=self.name)
         
     @property
     def is_lock(self):
@@ -89,14 +88,13 @@ class Book(object):
     
     @property
     def is_exists(self):
-        """docstring for exits"""
+        """docstring for exists"""
         return os.path.isdir(self.book_dir)
         
     @property
     def is_ready(self):
-        
-        print os.path.join(self.book_dir, "book.mobi")
-        print os.path.join(self.book_dir, "book.epub")
+        """docstring for is_ready"""
+    
         if os.path.isfile(os.path.join(self.book_dir, "book.mobi")) \
             and os.path.isfile(os.path.join(self.book_dir, "book.epub")):
             return True
@@ -151,7 +149,7 @@ class Book(object):
     
     def render(self, tpl_name, file_name, **kargs):
         """docstring for render"""
-        content = self.render_string(tpl_name, source_hash=self.source_hash, **kargs)
+        content = self.render_string(tpl_name, id=self.id, **kargs)
         
         fp = open(file_name, 'w')
         fp.write(content)
@@ -196,7 +194,6 @@ class Crawler(object):
     remove_attrs = ['title','width','height','onclick','onload']
     
     def __init__(self, url):
-        
         self.url = url
         
     def run(self):
@@ -208,13 +205,13 @@ class Crawler(object):
             logging.info("book is queueing")
             return
         else:
-             book.lock()
-             book.init()
+            book.init()
+            book.lock()
         
         url_obj = urlparse.urlparse(self.url)
         
-        if url_obj.hostname in rules:
-            rule = rules[url_obj.hostname]
+        if url_obj.hostname in Rules:
+            rule = Rules[url_obj.hostname]
         else:
             logging.error("rule not found!")
             return
@@ -223,7 +220,7 @@ class Crawler(object):
         html =  self.get_contents(self.url)
         
         if html is None:
-            logging.error("can't conntect %s " % self.url)
+            logging.error("can't connect %s " % self.url)
             return
         
         soup = BeautifulSoup(html)

@@ -9,10 +9,12 @@
         <input type="text" name="url" size="80" value="" />
         {{ xsrf_form_html() }}
         <input type="submit" value="提交" />
-        {% if error is 1 %}
-        <p>book/{{ book_id }}({{ url }})</p>
-        {% elif error is 2 %}
-        章节地址为空或不合法
+        {% if error is 2 %}
+        <strong class="error">章节地址不能为空</strong>
+        {% elif error is 3 %}
+        <strong class="error">章节地址无效</strong>
+        {% elif error is 4 %}
+        <strong class="error">暂不支持下载此网站小说</strong>
         {% end %}
     </div>
 </form>

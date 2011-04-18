@@ -3,7 +3,7 @@
 <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
     <dc:title>{{ title }}</dc:title>
     <dc:language>zh-CN</dc:language>
-    <dc:identifier id="PrimaryID" opf:scheme="URN">{{ source_hash }}</dc:identifier>
+    <dc:identifier id="PrimaryID" opf:scheme="URN">{{ id }}</dc:identifier>
     <dc:creator>{{ author }}</dc:creator>  
     <dc:publisher>{{ author }}</dc:publisher>
     <dc:subject></dc:subject>

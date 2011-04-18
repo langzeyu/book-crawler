@@ -10,18 +10,15 @@ import urlparse
 from datetime import datetime, timedelta
 from urllib import unquote, quote_plus
 
-import tornado.auth
 import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
-import tornado.httpclient
-from tornado import locale
 from tornado.options import define, options
 
 from crawler import Book
-from rules import rules
+from rules import Rules
 
 import celerytasks
 
@@ -49,10 +46,16 @@ class Application(tornado.web.Application):
         
 class BaseHandler(tornado.web.RequestHandler):
 
-    def is_url(self, url):
+    def is_url(self, text):
         """docstring for is_url"""
-        pass
+        return text.partition("://")[0] in ('http', 'https')
+    
+    def in_rules(self, url):
+        """docstring for in_rules"""
         
+        url = urlparse.urlparse(url)
+        
+        return url.hostname in Rules
 
 class HomeHandler(BaseHandler):
     """docstring for HomeHandler"""
@@ -74,7 +77,7 @@ class HomeHandler(BaseHandler):
             self.get(2, url)
         elif not self.is_url(url):
             self.get(3, url)
-        elif not in_rules(url):
+        elif not self.in_rules(url):
             self.get(4, url)
         else:
             
@@ -130,7 +133,7 @@ def runserver():
         http_server.listen(options.port)
     else:
         http_server.bind(options.port)
-        http_server.start(6)
+        http_server.start(4)
 
     tornado.ioloop.IOLoop.instance().start()
     
