@@ -189,7 +189,9 @@ class Book(object):
     
     def toMobi(self):
         """docstring for toMobi"""
-        os.system('%s %s -o "%s"' % (kindlegen, os.path.join(self.book_dir, "content.opf"), "book.mobi"))
+        
+        if os.path.isfile(kindlegen):
+            os.system('%s %s -o "%s"' % (kindlegen, os.path.join(self.book_dir, "content.opf"), "book.mobi"))
 
 class Crawler(object):
     """docstring for Crawler"""
