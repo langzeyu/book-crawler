@@ -4,10 +4,12 @@ base on Celery & Tornado
 
 # 安装
 
-* 修改 celeryconfig.py， 参考 http://www.celeryproject.org/
+* 安装 Tornado, 参考: http://www.tornadoweb.org
+* 安装 Celery, 参考: http://www.celeryproject.org/
+* 配置 celeryconfig.py
 * 运行 celeryd
 * 运行 python website.py
-* 可以编辑 rules.py 添加网站规则已支持更多小说网站
+* 可以编辑 rules.py 添加网站规则以支持更多小说网站
 
 # 许可
 

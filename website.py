@@ -100,7 +100,7 @@ class BookHandler(BaseHandler):
         """docstring for get"""
         
         book = Book(id=book_id)
-        self.render('down.html', is_ready=book.is_ready, book_id=book.id, epub=book.epub, mobi=book.mobi)
+        self.render('down.html', is_ready=book.is_ready, book_id=book.id, book_name=book.name, epub=book.epub, mobi=book.mobi)
     
 class DownHandler(BaseHandler):
     """docstring for DownHandler"""

@@ -200,7 +200,7 @@ class Crawler(object):
     def __init__(self, url):
         self.url = url
         
-    def run(self):
+    def collect(self):
         """docstring for run"""
         
         book = Book(self.url)
@@ -224,7 +224,7 @@ class Crawler(object):
         html =  self.get_contents(self.url)
         
         if html is None:
-            logging.error("can't connect %s " % self.url)
+            logging.error("get %s failed!" % self.url)
             return
         
         soup = BeautifulSoup(html)
@@ -237,18 +237,16 @@ class Crawler(object):
         
         chapter_list =  hxs.select(rule['chapter_list']).extract()
         
-
         logging.debug("start collect chapters...")
-        i = 0
+
         for chapter in chapter_list:
             subsoup = BeautifulSoup(chapter)
             
             a = subsoup.find('a')
-            # print a['href'], a.contents[0]
             
+            chapter_title = a.contents[0]
             chapter_url = urlparse.urljoin(self.url, a['href'])
-            
-            chapter_content = self.get_contents(chapter_url)
+            chapter_content = self.get_contents(chapter_url, self.url)
             
             if chapter_content is None:
                 continue
@@ -268,7 +266,7 @@ class Crawler(object):
             for tag in list(subsoup.findAll(attrs={"style":"display:none"})):
                 tag.extract()
             
-            book.add_chapter(a.contents[0], subsoup.renderContents('utf-8'))
+            book.add_chapter(chapter_title, subsoup.renderContents('utf-8'))
         
         logging.debug("start building...")
         
@@ -295,11 +293,11 @@ class Crawler(object):
             del response
             return data
         except Exception, e:
-            logging.error("collect %s filed!" % url)
+            logging.error("get %s filed!" % url)
             return None
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M')
-    Crawler("http://www.21shu.com/Html/Book/3/3310/").run()
+    Crawler("http://www.21shu.com/Html/Book/3/3310/").collect()
         

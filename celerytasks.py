@@ -11,7 +11,7 @@ from crawler import Crawler
 @task
 def add_crawler(url):
     
-    Crawler(url).run()
+    Crawler(url).collect()
     return True
     
 @task

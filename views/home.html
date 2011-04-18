@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}网络小说下载器{% end %}
-
 {% block body %}
 <form action="" method="post">
     <div>
         <label>小说章节目录地址：</label>
         <input type="text" name="url" size="80" value="" />
         {{ xsrf_form_html() }}
-        <input type="submit" value="提交" />
+        <input type="submit" value="下载" />
         {% if error is 2 %}
         <strong class="error">章节地址不能为空</strong>
         {% elif error is 3 %}
