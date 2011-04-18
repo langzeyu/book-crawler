@@ -44,6 +44,9 @@ class Application(tornado.web.Application):
         )
         tornado.web.Application.__init__(self, urls, **settings)
         
+        logging.basicConfig(level=logging.ERROR, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
+            datefmt='%m-%d %H:%M', filename= os.path.join(os.path.dirname(__file__), "logs", "website.log"), filemode='a')
+        
 class BaseHandler(tornado.web.RequestHandler):
 
     def is_url(self, text):

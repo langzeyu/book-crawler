@@ -1,3 +1,3 @@
 # Book crawler
 
-base on celery & tornado
+base on Celery & Tornado

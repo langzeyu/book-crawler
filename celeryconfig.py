@@ -13,7 +13,10 @@ CELERY_MONGODB_BACKEND_SETTINGS = {
     "taskmeta_collection": "celerytasks",
 }
 
-CELERYD_LOG_LEVEL = "INFO"
 CELERYD_CONCURRENCY = 10
+
+CELERYD_LOG_LEVEL = "INFO"
+CELERYD_LOG_FILE = "logs/celery.log"
+
 
 CELERY_IMPORTS = ("celerytasks", )
