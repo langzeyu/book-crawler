@@ -247,7 +247,12 @@ class Crawler(object):
             a = subsoup.find('a')
             
             chapter_title = a.contents[0]
-            chapter_url = urlparse.urljoin(self.url, a['href'])
+            
+            if a['href'].partition("://")[0] in ('http', 'https'):
+                chapter_url = a['href']
+            else:
+                chapter_url = urlparse.urljoin(self.url, a['href'])
+                
             chapter_content = self.get_contents(chapter_url, self.url)
             
             if chapter_content is None:
