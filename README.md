@@ -4,8 +4,8 @@ base on Celery & Tornado
 
 # 安装
 
-* 安装 Tornado, 参考: http://www.tornadoweb.org
-* 安装 Celery, 参考: http://www.celeryproject.org/
+* 安装 Tornado, 参考: [http://www.tornadoweb.org](http://www.tornadoweb.org)
+* 安装 Celery, 参考: [http://www.celeryproject.org](http://www.celeryproject.org)
 * 配置 celeryconfig.py
 * 运行 celeryd
 * 运行 python website.py
