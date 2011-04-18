@@ -15,3 +15,8 @@ base on Celery & Tornado
 # 许可
 
 Book Crawler is Licensed under the MIT license: [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+
+# 参考
+* Tornado [http://www.tornadoweb.org](http://www.tornadoweb.org)
+* Celery [http://www.celeryproject.org](http://www.celeryproject.org)
+* Kindlegen [http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000234621](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000234621)
