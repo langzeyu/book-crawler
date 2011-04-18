@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:title>{{ title }}</dc:title>
+    <dc:language>zh-CN</dc:language>
+    <dc:identifier id="PrimaryID" opf:scheme="URN">{{ source_hash }}</dc:identifier>
+    <dc:creator>{{ author }}</dc:creator>  
+    <dc:publisher>{{ author }}</dc:publisher>
+    <dc:subject></dc:subject>
+    <dc:date></dc:date>
+    <dc:description></dc:description>
+    <dc:rights>版权归原作者所有,仅供学习交流使用,上传者自行对所传内容的权属负责</dc:rights>
+</metadata>
+<manifest>
+    <item id="cover" media-type="application/xhtml+xml" href="cover.html"></item>
+    <item id="toc" media-type="application/xhtml+xml" href="toc.html"></item>
+    <item id="ncx"media-type="application/x-dtbncx+xml" href="toc.ncx"/>
+    {% for chapter in chapters %}
+    <item id="chapter_{{ chapter['index'] }}" media-type="application/xhtml+xml" href="chapters/{{ chapter['file'] }}"></item>
+    {% end%}
+</manifest>
+
+<spine toc="ncx">
+    <itemref idref="cover"/>
+    <itemref idref="toc"/>
+    {% for chapter in chapters %}
+    <itemref idref="chapter_{{ chapter['index'] }}"/>
+    {% end%}
+</spine>
+
+<guide>
+<reference type="text" title="封面" href="cover.html"></reference>
+    <reference type="toc" title="目录" href="toc.html"></reference>
+    {% for chapter in chapters %}
+    <reference type="text" title="{{ chapter['title'] }}" href="{{ chapter['file'] }}"/>
+    {% end%}
+</guide>
+</package>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}网络小说下载器{% end %}
+
+{% block body %}
+<form action="" method="post">
+    <div>
+        <label>小说章节目录地址：</label>
+        <input type="text" name="url" size="80" value="" />
+        {{ xsrf_form_html() }}
+        <input type="submit" value="提交" />
+        {% if error is 1 %}
+        <p>book/{{ book_id }}({{ url }})</p>
+        {% elif error is 2 %}
+        章节地址为空或不合法
+        {% end %}
+    </div>
+</form>
+{% end %}

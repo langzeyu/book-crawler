@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}网络小说下载器{% end %}
+
+{% block body %}
+
+{% if not is_ready %}
+    下载中，请记住链接稍候来下载！
+{% else %}
+下载你喜欢的格式：
+    {% if epub %} <a href="{{ book_id }}.epub">epub</a> {% end %}
+    {% if mobi %} <a href="{{ book_id }}.mobi">mobi</a> {% end %}
+{% end %}
+{% end %}
