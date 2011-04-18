@@ -182,6 +182,10 @@ class Book(object):
     def toPdf(self):
         """docstring for toPdf"""
         pass
+        
+    def toText(self):
+        """docstring for toText"""
+        pass
     
     def toMobi(self):
         """docstring for toMobi"""

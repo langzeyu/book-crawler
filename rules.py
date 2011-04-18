@@ -16,3 +16,4 @@ Rules['www.21shu.com'] = {
     'chapter_title': "//div[@id='TextTitle']/span[@class='booktitle']/text()",
     'chapter_content': "//div[@id='BookText']",
 }
+

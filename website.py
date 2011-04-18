@@ -10,6 +10,9 @@ import urlparse
 from datetime import datetime, timedelta
 from urllib import unquote, quote_plus
 
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+
 import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
