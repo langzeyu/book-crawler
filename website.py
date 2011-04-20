@@ -20,6 +20,11 @@ import tornado.web
 import tornado.autoreload
 from tornado.options import define, options
 
+try:
+    import daemon
+except:
+    daemon = None
+
 from crawler import Book
 from rules import Rules
 
@@ -132,6 +137,11 @@ class DownHandler(BaseHandler):
 
 def runserver():
     tornado.options.parse_command_line()
+    
+    if not options.debug and daemon:
+        log = open(os.path.join(os.path.dirname(__file__), 'logs', 'website%s.log' % options.port), 'a+')
+        ctx = daemon.DaemonContext(stdout=log, stderr=log,  working_directory='.')
+        ctx.open()
     
     http_server = tornado.httpserver.HTTPServer(Application())
     
