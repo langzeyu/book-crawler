@@ -26,7 +26,38 @@ user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7) AppleWebKit/534.24 
 
 tpl_dir  = os.path.join(os.path.dirname(__file__), 'tpl')
 data_dir = os.path.join(os.path.dirname(__file__), 'data')
-kindlegen = os.path.join(os.path.dirname(__file__), 'lib', 'kindlegen')
+
+
+iswindows = 'win32' in sys.platform.lower() or 'win64' in sys.platform.lower()
+isosx     = 'darwin' in sys.platform.lower()
+isfreebsd = 'freebsd' in sys.platform.lower()
+islinux   = not(iswindows or isosx or isfreebsd)
+
+if iswindows:
+    kindlegen = os.path.join(os.path.dirname(__file__), 'lib', 'kindlegen.exe')
+else:
+    kindlegen = os.path.join(os.path.dirname(__file__), 'lib', 'kindlegen')
+
+def get_contents(url, referer=None):
+    """docstring for get_contents"""
+
+    try:
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', user_agent)
+
+        if referer is not None:
+            req.add_header('Referer', referer)
+
+        response = urllib2.urlopen(req)
+        data = response.read()
+
+        response.close()
+        response = None
+        del response
+        return data
+    except Exception, e:
+        logging.error("get %s failed!" % url)
+        return None
 
 class Book(object):
     """docstring for Book"""
@@ -196,7 +227,7 @@ class Book(object):
 class Crawler(object):
     """docstring for Crawler"""
     
-    remove_tags = ['script','object','video','embed','iframe','noscript','style','img']
+    remove_tags = ['script','object','video','embed','iframe','noscript','img']
     remove_attrs = ['title','width','height','onclick','onload']
     
     def __init__(self, url):
@@ -204,15 +235,6 @@ class Crawler(object):
         
     def collect(self):
         """docstring for run"""
-        
-        book = Book(self.url)
-        
-        if book.is_lock:
-            logging.info("book is queueing")
-            return
-        else:
-            book.init()
-            book.lock()
         
         url_obj = urlparse.urlparse(self.url)
         
@@ -223,11 +245,20 @@ class Crawler(object):
             return
         
         logging.debug("start collect index...")
-        html =  self.get_contents(self.url)
+        html = get_contents(self.url)
         
         if html is None:
             logging.error("get %s failed!" % self.url)
             return
+            
+        book = Book(self.url)
+
+        if book.is_lock:
+            logging.info("book is queueing")
+            return
+        else:
+            book.init()
+            book.lock()
         
         soup = BeautifulSoup(html)
         html = soup.renderContents('utf-8')
@@ -242,6 +273,7 @@ class Crawler(object):
         logging.debug("start collect chapters...")
 
         for chapter in chapter_list:
+
             subsoup = BeautifulSoup(chapter)
             
             a = subsoup.find('a')
@@ -253,13 +285,13 @@ class Crawler(object):
             else:
                 chapter_url = urlparse.urljoin(self.url, a['href'])
                 
-            chapter_content = self.get_contents(chapter_url, self.url)
+            chapter_content = get_contents(chapter_url, self.url)
             
             if chapter_content is None:
                 continue
             
-            subsoup = BeautifulSoup(chapter_content)
-            chapter_content = subsoup.renderContents('utf-8')
+            # subsoup = BeautifulSoup(chapter_content)
+            # chapter_content = subsoup.renderContents('utf-8')
 
             hxs = HtmlXPathSelector(text=chapter_content)
             
@@ -281,27 +313,6 @@ class Crawler(object):
         book.toEpub()
         book.toMobi()
         book.unlock()
-
-    def get_contents(self, url, referer=None):
-        """docstring for get_contents"""
-
-        try:
-            req = urllib2.Request(url)
-            req.add_header('User-Agent', user_agent)
-
-            if referer is not None:
-                req.add_header('Referer', referer)
-
-            response = urllib2.urlopen(req)
-            data = response.read()
-
-            response.close()
-            response = None
-            del response
-            return data
-        except Exception, e:
-            logging.error("get %s filed!" % url)
-            return None
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',

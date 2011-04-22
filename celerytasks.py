@@ -9,11 +9,10 @@ from celery.task import task
 from crawler import Crawler
 
 @task
-def add_crawler(url):
-    
+def crawler(url):
     Crawler(url).collect()
     return True
     
 @task
-def add_collect(url, file_name):
+def add_collect(book_id, chapter_idx, url):
     pass

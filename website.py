@@ -31,6 +31,7 @@ from rules import Rules
 import celerytasks
 
 define("port", default=8800, help="The port to be listened", type=int)
+define("daemon", default=False, help="daemon mode", type=bool)
 define("debug", default=False, help="debug mode", type=bool)
 
 data_dir = os.path.join(os.path.dirname(__file__), 'data')
@@ -138,7 +139,7 @@ class DownHandler(BaseHandler):
 def runserver():
     tornado.options.parse_command_line()
     
-    if not options.debug and daemon:
+    if options.daemon and daemon:
         log = open(os.path.join(os.path.dirname(__file__), 'logs', 'website%s.log' % options.port), 'a+')
         ctx = daemon.DaemonContext(stdout=log, stderr=log,  working_directory='.')
         ctx.open()
