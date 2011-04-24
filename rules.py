@@ -35,3 +35,12 @@ Rules['read.dangdang.com'] = {
     'chapter_title': "//div[@class='cont_detail']/h2/text()",
     'chapter_content': "//div[@id='content']",
 }
+
+
+Rules['read.360buy.com'] = {
+    'book_name': "//div[@class='m works']/div[@class='mt']/h3/text()[2]",
+    'book_author': "//div[@class='book-authorinfo']/a[1]/text()",
+    'chapter_list': "//div[@class='books-list clearfix']/ul/li/a",
+    'chapter_title': "//div[@id='information']/div[@class='mc clearfix']/h1/text()",
+    'chapter_content': "//div[@id='zoom']",
+}

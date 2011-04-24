@@ -337,5 +337,7 @@ class Crawler(object):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M')
-    Crawler("http://read.dangdang.com/book_15062").collect()
+    # Crawler("http://read.dangdang.com/book_15062").collect()
+    Crawler("http://read.360buy.com/5033/index.html").collect()
+    
         
