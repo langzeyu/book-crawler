@@ -15,7 +15,7 @@ from tornado import template
 from BeautifulSoup import BeautifulSoup
 from scrapy.selector import HtmlXPathSelector
 
-from rules import Rules
+from rules import *
 
 import codecs
 import encodings
@@ -258,17 +258,38 @@ class Crawler(object):
             return
         else:
             book.init()
-            book.lock()
+            # book.lock()
+
+        if 'encoding' in rule:
+            encoding = rule['encoding']
+        else:
+            encoding = 'utf-8'
         
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, fromEncoding=encoding)
         html = soup.renderContents('utf-8')
         
         hxs = HtmlXPathSelector(text=html)
         
         book.set_name(hxs.select(rule['book_name']).extract()[0].strip())
-        book.author = hxs.select(rule['book_author']).extract()[0].strip()
         
-        chapter_list =  hxs.select(rule['chapter_list']).extract()
+        if 'book_author' in rule:
+            book.author = hxs.select(rule['book_author']).extract()[0].strip()
+        
+        if 'chapter_url' in rule and 'book_id' in rule:
+            book_id = rule['book_id'](self.url)
+            
+            html = get_contents(rule['chapter_url'] % book_id)
+            
+            soup = BeautifulSoup(html, fromEncoding=encoding)
+            html = soup.renderContents('utf-8')
+
+            hxs = HtmlXPathSelector(text=html)
+            chapter_list =  hxs.select(rule['chapter_list']).extract()
+            
+        else:
+            chapter_list =  hxs.select(rule['chapter_list']).extract()
+            
+        print book.name
         
         logging.debug("start collect chapters...")
 
@@ -277,8 +298,6 @@ class Crawler(object):
             subsoup = BeautifulSoup(chapter)
             
             a = subsoup.find('a')
-            
-            chapter_title = a.contents[0]
             
             if a['href'].partition("://")[0] in ('http', 'https'):
                 chapter_url = a['href']
@@ -290,11 +309,12 @@ class Crawler(object):
             if chapter_content is None:
                 continue
             
-            # subsoup = BeautifulSoup(chapter_content)
-            # chapter_content = subsoup.renderContents('utf-8')
+            subsoup = BeautifulSoup(chapter_content)
+            chapter_content = subsoup.renderContents('utf-8')
 
             hxs = HtmlXPathSelector(text=chapter_content)
             
+            chapter_title = hxs.select(rule['chapter_title']).extract()[0].strip()
             chapter_content = hxs.select(rule['chapter_content']).extract()[0].strip()
             
             subsoup = BeautifulSoup(chapter_content)
@@ -312,10 +332,10 @@ class Crawler(object):
         book.create()
         book.toEpub()
         book.toMobi()
-        book.unlock()
+        # book.unlock()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M')
-    Crawler("http://www.21shu.com/Html/Book/3/3310/").collect()
+    Crawler("http://read.dangdang.com/book_15062").collect()
         

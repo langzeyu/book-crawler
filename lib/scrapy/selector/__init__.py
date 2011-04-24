@@ -9,3 +9,4 @@ lxml will be used.
 """
 
 from scrapy.selector.libxml2sel import *
+# from scrapy.selector.lxmlsel import *
