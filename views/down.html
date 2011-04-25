@@ -5,8 +5,10 @@
 {% if not book.is_ready %}
     下载中，请记住网址稍候来下载！
 {% else %}
- <strong>{{ book.name }}</strong>(下载你喜欢的格式)： 
+ <h2>{{ book.name }}</h2>
+ <p>(请选择你喜欢的格式下载)： 
     {% if book.epub %} <a href="{{ book.id }}.epub">epub</a> {% end %}
     {% if book.mobi %} <a href="{{ book.id }}.mobi">mobi</a> {% end %}
+ </p>
 {% end %}
 {% end %}
