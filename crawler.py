@@ -309,7 +309,7 @@ class Crawler(object):
             if chapter_content is None:
                 continue
             
-            subsoup = BeautifulSoup(chapter_content)
+            subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
             chapter_content = subsoup.renderContents('utf-8')
 
             hxs = HtmlXPathSelector(text=chapter_content)
@@ -317,7 +317,7 @@ class Crawler(object):
             chapter_title = hxs.select(rule['chapter_title']).extract()[0].strip()
             chapter_content = hxs.select(rule['chapter_content']).extract()[0].strip()
             
-            subsoup = BeautifulSoup(chapter_content)
+            subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
             
             for tag in subsoup.findAll(self.remove_tags):
                 tag.extract()
