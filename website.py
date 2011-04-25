@@ -95,7 +95,7 @@ class HomeHandler(BaseHandler):
             
             book = Book(url)
             if not book.is_exists:
-                celerytasks.add_crawler.apply_async(args=[url]) #, eta=datetime.now() + timedelta(seconds=10))
+                celerytasks.crawler.apply_async(args=[url]) #, eta=datetime.now() + timedelta(seconds=10))
                 
             self.redirect('book/%s' % book.id)
             
