@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% if book.is_ready %}
+{% block title %}{{ book.name }}{% end %}
+{% end %}
+
 {% block body %}
 <div id="request">
 {% if not book.is_ready %}

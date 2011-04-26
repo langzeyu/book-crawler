@@ -21,10 +21,37 @@ $(function(){
             $("#uri").css({'color': '#111'});
         }
     });
+    
+    $("#add_req_hdr").click(function(){
+        add_req_hdr();
+    });
 });
+
+var email_number = 0
+
+function add_req_hdr(hdr_name, hdr_val){
+
+    if (email_number >= 3) return
+    
+    var hdr_shell = "<div class='req_hdr'>";
+    hdr_shell += "<a href='#' class='delete_req_hdr'>x</a> ";
+    hdr_shell += "<input type='email' size='30' name='email'>";
+    hdr_shell += "</div>";
+    
+    $("#req_hdrs").append(hdr_shell);
+    
+    email_number += 1;
+    
+    /* handle the delete button */
+    $(".delete_req_hdr:last").bind("click", function(){
+        var req_hdr = $(this).closest(".req_hdr");
+        req_hdr.remove();
+        email_number -= 1;
+        return false;
+    });
+}
 </script>
 {% end %}
-
 
 {% block body %}
 <div id="request">
@@ -32,6 +59,10 @@ $(function(){
     <form id="request_form" action="/" method="post">
         <input type="url" id="uri" name="url" size="80" value="" />
         {{ xsrf_form_html() }}
+        <div id="req_hdrs"></div> 
+        <div class="add_req_hdr"> 
+            <a href="#" id="add_req_hdr">添加接收邮件地址</a> 
+        </div>
     </form>
 </div>
 
@@ -42,13 +73,13 @@ $(function(){
 <p class="error">章节地址无效</p>
 {% elif error is 4 %}
 <p class="error">暂不支持下载此网站小说</p>
-{% end %}    
+{% end %}
     
-
 <p>支持网站列表：</p>
 <ul class="site_list">
     {% for site in allow_sites %}
     <li>http://{{ site }}</li>
     {% end %}
 </ul>
+<p>* 如果发送到 <strong>Kindle</strong> 请确保已经将 <strong>@dogear.mobi</strong> 加入 "Your Kindle's approved email list"
 {% end %}
