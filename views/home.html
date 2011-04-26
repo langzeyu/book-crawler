@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-
-<script src="http://ajax.microsoft.com/ajax/jquery/jquery-1.5.2.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
 <script>!window.jQuery && document.write('<script src="/static/jquery-1.5.2.min.js"><\/script>')</script>
 <script type="text/javascript" charset="utf-8">
 $(function(){
@@ -59,10 +58,10 @@ function add_req_hdr(hdr_name, hdr_val){
     <form id="request_form" action="/" method="post">
         <input type="url" id="uri" name="url" size="80" value="" />
         {{ xsrf_form_html() }}
-        <div id="req_hdrs"></div> 
+        <!-- <div id="req_hdrs"></div> 
         <div class="add_req_hdr"> 
             <a href="#" id="add_req_hdr">添加接收邮件地址</a> 
-        </div>
+        </div> -->
     </form>
 </div>
 
@@ -81,5 +80,5 @@ function add_req_hdr(hdr_name, hdr_val){
     <li>http://{{ site }}</li>
     {% end %}
 </ul>
-<p>* 如果发送到 <strong>Kindle</strong> 请确保已经将 <strong>@dogear.mobi</strong> 加入 "Your Kindle's approved email list"
+<!-- <p>* 如果发送到 <strong>Kindle</strong> 请确保已经将 <strong>@dogear.mobi</strong> 加入 "Your Kindle's approved email list" -->
 {% end %}
