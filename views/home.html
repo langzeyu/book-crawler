@@ -16,4 +16,13 @@
         {% end %}
     </div>
 </form>
+
+<p>
+    支持网站列表：
+    <ul>
+        {% for site in allow_sites %}
+        <li>http://{{ site }}</li>
+        {% end %}
+    </ul>
+</p>
 {% end %}

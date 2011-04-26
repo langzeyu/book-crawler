@@ -26,7 +26,7 @@ except:
     daemon = None
 
 from crawler import Book
-from rules import Rules
+from rules import *
 
 import celerytasks
 
@@ -77,7 +77,9 @@ class HomeHandler(BaseHandler):
         if url is None:
             url = self.get_argument("url", None)
         
-        self.render("home.html", error = error, url=url, book_id=book_id)
+        allow_sites = Rules.keys()
+        
+        self.render("home.html", error = error, url=url, book_id=book_id, allow_sites=allow_sites)
         
         
     def post(self):
