@@ -3,11 +3,15 @@
 <head>
 <meta charset="utf-8" /> 
 <title>{% block title %}网络小说下载器{% end %}</title>
-<style type="text/css" media="screen">
-   .error {
-       color:red;
-   }
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+<!--[if IE]> 
+<style type="text/css">
+    #right_column {
+    	width: 650px;
+        float: left;
 </style>
+<![endif]-->
+{% block head %}{% end %}
 </head>
 <body>
 {% block body %}{% end %}

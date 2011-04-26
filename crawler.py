@@ -65,6 +65,7 @@ class Book(object):
     id = ""
     name = ""
     author = ''
+    cover = None
     chapter_list = []
     
     source = ""
@@ -174,8 +175,8 @@ class Book(object):
         """docstring for create_index"""
         self.render("toc.html", os.path.join(self.book_dir, "toc.html"), title=self.name, chapters=self.chapter_list)
         self.render("toc.ncx", os.path.join(self.book_dir, "toc.ncx"), title=self.name, chapters=self.chapter_list)
-        self.render("content.opf", os.path.join(self.book_dir, "content.opf"), title=self.name, author=self.author, chapters=self.chapter_list)
-        self.render("cover.html", os.path.join(self.book_dir, "cover.html"), title=self.name, author=self.author)
+        self.render("content.opf", os.path.join(self.book_dir, "content.opf"), title=self.name, author=self.author, chapters=self.chapter_list, cover=self.cover)
+        self.render("cover.html", os.path.join(self.book_dir, "cover.html"), title=self.name, author=self.author, cover=self.cover)
         self.render("style.css", os.path.join(self.book_dir, "style.css"))
     
     def render(self, tpl_name, file_name, **kargs):
@@ -189,6 +190,15 @@ class Book(object):
     def render_string(self, tpl_name, **kargs):
         """docstring for render_string"""
         return template.Loader(tpl_dir).load(tpl_name).generate(**kargs)
+    
+    def set_cover(self, data):
+        """docstring for set_cover"""
+        
+        fp = open(os.path.join(self.book_dir, "cover.jpg"), 'w')
+        fp.write(data)
+        fp.close()
+        
+        self.cover = "cover.jpg"
       
     def toEpub(self):
         """docstring for toEpub"""
@@ -258,7 +268,7 @@ class Crawler(object):
             return
         else:
             book.init()
-            # book.lock()
+            book.lock()
 
         if 'encoding' in rule:
             encoding = rule['encoding']
@@ -274,6 +284,12 @@ class Crawler(object):
         
         if 'book_author' in rule:
             book.author = hxs.select(rule['book_author']).extract()[0].strip()
+            
+        if 'book_cover' in rule:
+            cover_url = hxs.select(rule['book_cover']).extract()[0]
+            cover_data = get_contents(cover_url, self.url)
+            book.set_cover(cover_data)
+            
         
         if 'chapter_url' in rule and 'book_id' in rule:
             book_id = rule['book_id'](self.url)
@@ -289,8 +305,7 @@ class Crawler(object):
         else:
             chapter_list =  hxs.select(rule['chapter_list']).extract()
             
-        print book.name
-        
+        logging.debug("start collect %s" % book.name)
         logging.debug("start collect chapters...")
 
         for chapter in chapter_list:
@@ -332,7 +347,7 @@ class Crawler(object):
         book.create()
         book.toEpub()
         book.toMobi()
-        # book.unlock()
+        book.unlock()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',

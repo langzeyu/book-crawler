@@ -14,5 +14,5 @@ def crawler(url):
     return True
     
 @task
-def add_collect(book_id, chapter_idx, url):
+def collect(book_id, chapter_idx, url):
     pass

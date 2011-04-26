@@ -10,11 +10,15 @@
     <dc:date></dc:date>
     <dc:description></dc:description>
     <dc:rights>版权归原作者所有,仅供学习交流使用,上传者自行对所传内容的权属负责</dc:rights>
+    {% if cover %}<meta name="cover" content="cover-image" />{% end %}
 </metadata>
 <manifest>
     <item id="cover" media-type="application/xhtml+xml" href="cover.html"></item>
     <item id="toc" media-type="application/xhtml+xml" href="toc.html"></item>
     <item id="ncx"media-type="application/x-dtbncx+xml" href="toc.ncx"/>
+    {% if cover %}
+    <item href="{{ cover }}" id="cover-image" media- type="image/jpeg" />
+    {% end %}
     {% for chapter in chapters %}
     <item id="chapter_{{ chapter['index'] }}" media-type="application/xhtml+xml" href="chapters/{{ chapter['file'] }}"></item>
     {% end%}
