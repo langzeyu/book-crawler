@@ -7,6 +7,7 @@ import logging
 import time
 import hashlib
 import urlparse
+import re
 from datetime import datetime, timedelta
 from urllib import unquote, quote_plus
 
