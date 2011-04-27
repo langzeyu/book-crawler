@@ -72,8 +72,8 @@ class BaseHandler(tornado.web.RequestHandler):
         
     def url_validate(self, url):
         """docstring for validate"""
-        url = urlparse.urlparse(url)
-        rule = Rules[url.hostname]
+        url_parsed = urlparse.urlparse(url)
+        rule = Rules[url_parsed.hostname]
         
         if 'url_validate' in rule and not re.match(rule['url_validate'], url):
             return False
