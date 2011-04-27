@@ -96,7 +96,7 @@ class HomeHandler(BaseHandler):
     def post(self):
         """docstring for fname"""
         
-        url = self.get_argument("url", None)
+        url = self.get_argument("url", None).strip()
         
         if not url:
             self.get(2, url)

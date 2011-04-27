@@ -11,6 +11,7 @@ Rules = {}
 
 Rules['www.21shu.com'] = {
     'encoding': "gb2312",
+    'url_validate' : r'^http:\/\/www\.21shu\.com\/Html\/Book\/[0-9]+\/[0-9]+\/(index\.html)?$',
     'book_name': "//div[@id='TextTitle']/span[@class='booktitle']/text()",
     'book_author': "//div[@id='TextInfo']/a/text()",
     'chapter_list': "//div[@id='BookText']/ul/li/a",
@@ -24,6 +25,7 @@ def dangdang_id(url):
 
 Rules['read.dangdang.com'] = {
     'encoding': 'gbk',
+    'url_validate' : r'^http:\/\/read\.dangdang\.com\/book_[0-9]+.*$',
     'book_name': "//div[@class='book_title works_title']/h1/text()",
     'book_author': "//div[@class='buy_detail']/div[@class='deta_1']/p/a/text()",
     'book_cover': "//div[@class='pic_bg_f']/span/img/@src",
@@ -54,6 +56,7 @@ Rules['www.qidian.com'] = {
 
 Rules['read.360buy.com'] = {
     'encoding': "gb2312",
+    'url_validate' : r'^http:\/\/read\.360buy\.com\/[0-9]+\/(index\.html)?$',
     'book_name': "//div[@class='m works']/div[@class='mt']/h3/text()[2]",
     'book_author': "//div[@class='book-authorinfo']/a[1]/text()",
     'book_cover': "//div[@id='book-cover']/a/img/@src",
