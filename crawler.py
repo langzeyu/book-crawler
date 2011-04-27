@@ -7,6 +7,7 @@ import urllib2
 import urlparse
 import zipfile
 import logging
+import re
 
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
@@ -107,7 +108,8 @@ class Book(object):
         
     def unlock(self):
         """docstring for unlock"""
-        os.unlink(os.path.join(self.book_dir, 'lock'))
+        lock_file = os.path.join(self.book_dir, 'lock')
+        if os.path.isfile(lock_file): os.unlink(lock_file)
     
     def set_name(self, name):
         self.name = name
@@ -243,6 +245,12 @@ class Crawler(object):
     def __init__(self, url):
         self.url = url
         
+    def write_file(self, data, filename='t.html'):
+        """docstring for write_file"""
+        fp = open(filename, 'w')
+        fp.write(data)
+        fp.close()
+        
     def collect(self):
         """docstring for run"""
         
@@ -252,6 +260,10 @@ class Crawler(object):
             rule = Rules[url_obj.hostname]
         else:
             logging.error("rule not found!")
+            return
+            
+        if 'url_validate' in rule and not re.match(rule['url_validate'], self.url):
+            logging.error("url invalid!")
             return
         
         logging.debug("start collect index...")
@@ -268,7 +280,7 @@ class Crawler(object):
             return
         else:
             book.init()
-            book.lock()
+            # book.lock()
 
         if 'encoding' in rule:
             encoding = rule['encoding']
@@ -280,21 +292,47 @@ class Crawler(object):
         
         hxs = HtmlXPathSelector(text=html)
         
-        book.set_name(hxs.select(rule['book_name']).extract()[0].strip())
+        # self.write_file(html)
+
+        book_name = hxs.select(rule['book_name']).extract()
+        
+        if type(book_name) is list:
+            book_name = book_name[0].strip()
+        elif not book_name:
+            book_name = soup.html.head.title.string
+        
+        book.set_name(book_name)
         
         if 'book_author' in rule:
-            book.author = hxs.select(rule['book_author']).extract()[0].strip()
+            book_author = hxs.select(rule['book_author']).extract()
+            
+            if type(book_author) is list:
+                book.author = book_author[0].strip()
+            elif type(book_author) is str:
+                book.author = book_author
+            
             
         if 'book_cover' in rule:
-            cover_url = hxs.select(rule['book_cover']).extract()[0]
-            cover_data = get_contents(cover_url, self.url)
-            book.set_cover(cover_data)
+            cover_url = hxs.select(rule['book_cover']).extract()
             
+            if type(cover_url) is list:
+                cover_url = cover_url[0]
+            
+            if cover_url:
+                cover_data = get_contents(cover_url, self.url)
+                book.set_cover(cover_data)
         
-        if 'chapter_url' in rule and 'book_id' in rule:
-            book_id = rule['book_id'](self.url)
+        if 'chapter_url' in rule:
             
-            html = get_contents(rule['chapter_url'] % book_id)
+            if 'book_id' in rule:
+                book_id = rule['book_id'](self.url)
+                chapter_url = rule['chapter_url'] % book_id
+            else:
+                chapter_url = hxs.select(rule['chapter_url']).extract()
+                if type(chapter_url) is list:
+                    chapter_url = chapter_url[0]
+            
+            html = get_contents(chapter_url)
             
             soup = BeautifulSoup(html, fromEncoding=encoding)
             html = soup.renderContents('utf-8')
@@ -309,38 +347,70 @@ class Crawler(object):
         logging.debug("start collect chapters...")
 
         for chapter in chapter_list:
-
-            subsoup = BeautifulSoup(chapter)
             
-            a = subsoup.find('a')
+            try:
+                subsoup = BeautifulSoup(chapter)
             
-            if a['href'].partition("://")[0] in ('http', 'https'):
-                chapter_url = a['href']
-            else:
-                chapter_url = urlparse.urljoin(self.url, a['href'])
+                a = subsoup.find('a')
+            
+                if a['href'].partition("://")[0] in ('http', 'https'):
+                    chapter_url = a['href']
+                else:
+                    chapter_url = urlparse.urljoin(self.url, a['href'])
                 
-            chapter_content = get_contents(chapter_url, self.url)
+                chapter_content = get_contents(chapter_url, self.url)
             
-            if chapter_content is None:
-                continue
+                if chapter_content is None:
+                    continue
             
-            subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
-            chapter_content = subsoup.renderContents('utf-8')
+                subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
+                chapter_content = subsoup.renderContents('utf-8')
 
-            hxs = HtmlXPathSelector(text=chapter_content)
+                hxs = HtmlXPathSelector(text=chapter_content)
             
-            chapter_title = hxs.select(rule['chapter_title']).extract()[0].strip()
-            chapter_content = hxs.select(rule['chapter_content']).extract()[0].strip()
-            
-            subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
-            
-            for tag in subsoup.findAll(self.remove_tags):
-                tag.extract()
+                chapter_title = hxs.select(rule['chapter_title']).extract()
                 
-            for tag in list(subsoup.findAll(attrs={"style":"display:none"})):
-                tag.extract()
+                if type(chapter_title) is list:
+                    chapter_title = chapter_title[0].strip()
+                else:
+                    chapter_title = subsoup.html.head.title.string
             
-            book.add_chapter(chapter_title, subsoup.renderContents('utf-8'))
+                if 'chapter_content_url' in rule:
+                    chapter_content_url = hxs.select(rule['chapter_content_url']).extract()
+                    
+                    if type(chapter_content_url) is list and len(chapter_content_url) > 0:
+                        chapter_content_url = chapter_content_url[0].strip()
+                    # elif not chapter_content_url:
+                    else:
+                        continue
+
+                    chapter_content = get_contents(chapter_content_url, chapter_url)
+                
+                    subsoup = BeautifulSoup(chapter_content, fromEncoding=encoding)
+                    chapter_content = subsoup.renderContents('utf-8')
+                else:
+                    chapter_content = hxs.select(rule['chapter_content']).extract()
+                
+                    if type(chapter_content) is list:
+                        chapter_content = ''.join(chapter_content).strip()
+                
+                if not chapter_content:
+                    continue
+                    
+                if 'chapter_content_filter' in rule:
+                    chapter_content = rule['chapter_content_filter'](chapter_content)
+            
+                subsoup = BeautifulSoup(chapter_content)
+            
+                for tag in subsoup.findAll(self.remove_tags):
+                    tag.extract()
+                
+                for tag in list(subsoup.findAll(attrs={"style":"display:none"})):
+                    tag.extract()
+            
+                book.add_chapter(chapter_title, subsoup.renderContents('utf-8'))
+            except Exception, e:
+                logging.error(e)
         
         logging.debug("start building...")
         
@@ -353,6 +423,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(msecs)03d %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M')
     # Crawler("http://read.dangdang.com/book_15062").collect()
-    Crawler("http://read.360buy.com/5033/index.html").collect()
+    # Crawler("http://read.360buy.com/5033/index.html").collect()
+    Crawler("http://www.qidian.com/BookReader/1887208.aspx").collect()
+    
     
         

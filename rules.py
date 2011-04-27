@@ -34,12 +34,30 @@ Rules['read.dangdang.com'] = {
     'chapter_content': "//div[@id='content']",
 }
 
+def qidian_filter(content):
+    """docstring for qidain_filter"""
+    content = content[16:]
+    content = content[:-6]
+    content = content.replace("<p>　　", "<p>")
+    return content
+
+Rules['www.qidian.com'] = {
+    'encoding': 'gb2312',
+    'url_validate' : r'^http:\/\/www\.qidian\.com\/BookReader\/[0-9]+\.aspx$',
+    'book_name': "//div[@class='booktitle']/h1/text()",
+    'book_author': "//div[@id='bookdirectory']/div/div[@class='booktitle']/span/a[1]/text()",
+    'chapter_list': "//div[@id='content']/div[@class='box_cont']/div[@class='list']//a",
+    'chapter_title': "//span[@id='lbChapterName']/text()",
+    'chapter_content_url': "//div[@id='content']/script/@src",
+    'chapter_content_filter': qidian_filter,
+}
+
 Rules['read.360buy.com'] = {
     'encoding': "gb2312",
     'book_name': "//div[@class='m works']/div[@class='mt']/h3/text()[2]",
     'book_author': "//div[@class='book-authorinfo']/a[1]/text()",
     'book_cover': "//div[@id='book-cover']/a/img/@src",
-    'chapter_list': "//div[@class='books-list clearfix']/ul/li/a",
+    'chapter_list': "//div[@class='books-list clearfix']/ul//a",
     'chapter_title': "//div[@id='information']/div[@class='mc clearfix']/h1/text()",
     'chapter_content': "//div[@id='zoom']",
 }

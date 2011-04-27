@@ -68,6 +68,16 @@ class BaseHandler(tornado.web.RequestHandler):
         url = urlparse.urlparse(url)
         
         return url.hostname in Rules
+        
+    def url_validate(self, url):
+        """docstring for validate"""
+        url = urlparse.urlparse(url)
+        rule = Rules[url.hostname]
+        
+        if 'url_validate' in rule and not re.match(rule['url_validate'], url):
+            return False
+        else:
+            return True
 
 class HomeHandler(BaseHandler):
     """docstring for HomeHandler"""
@@ -93,6 +103,8 @@ class HomeHandler(BaseHandler):
             self.get(3, url)
         elif not self.in_rules(url):
             self.get(4, url)
+        elif not self.url_validate(url):
+            self.get(5, url)
         else:
             
             book = Book(url)
