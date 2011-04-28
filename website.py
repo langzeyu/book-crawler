@@ -7,6 +7,7 @@ import logging
 import time
 import hashlib
 import urlparse
+import socket
 import re
 from datetime import datetime, timedelta
 from urllib import unquote, quote_plus
@@ -30,6 +31,8 @@ from crawler import Book
 from rules import *
 
 import celerytasks
+
+socket.setdefaulttimeout(30)
 
 define("port", default=8800, help="The port to be listened", type=int)
 define("daemon", default=False, help="daemon mode", type=bool)

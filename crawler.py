@@ -311,7 +311,6 @@ class Crawler(object):
             elif type(book_author) is str:
                 book.author = book_author
             
-            
         if 'book_cover' in rule:
             cover_url = hxs.select(rule['book_cover']).extract()
             
